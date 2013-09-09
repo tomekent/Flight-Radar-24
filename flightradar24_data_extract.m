@@ -177,14 +177,14 @@ idx=[1,regexpi(content,'],'),length(content)-1];
 idx(1)=18;
 
 %edit the data strings so they are in a cell style format
-predata = cell(count,1);
-% A=content(idx(1)+1:idx(2));
-%     A = regexprep(A,'"','''');
-%     A = regexprep(A,':[',',');
-%     A = regexprep(A,']','}');
-%     A = regexprep(A,'null','''null''');
-%     A = strcat('{',A);
-% predata(1)=cellstr(A);
+% predata = cell(count,1);
+
+data=cell(count,19);
+
+%create headers
+headers = {'Flight Code','Hex','Lon','Lat','Track','Altitude','Speed','Squark','Radar','Aircraft','reg','Time Stamp','Dept Airport','Dest Airport','Flight Code Short','','','Flight Code','Time Stamp 2'};
+dbstop('error')
+
 for i=1:count
     A=content(idx(i)+2:idx(i+1));
     A = regexprep(A,':[',',');
@@ -193,33 +193,15 @@ for i=1:count
     A = regexprep(A,']','}');
     A = regexprep(A,'null','''null''');
     A = strcat('{',A);
-   
-        
-    predata(i)=cellstr(A);
-end
-
-
-data=cell(count,19);
-
-%create headers
-headers = {'Flight Code','Hex','Lon','Lat','Track','Altitude','Speed','Squark','Radar','Aircraft','reg','Time Stamp','Dept Airport','Dest Airport','Flight Code Short','','','Flight Code','Time Stamp 2'};
-dbstop('error')
-for i=1:count 
-%     if i==1
-%         ztmp = char(predata(i));
-%         Z=eval(ztmp(13:end));
-%     else
-    Z = eval(char(predata(i)));
-%     end
-    
+          
+    Z = eval(char(cellstr(A)));
     for k= size(Z,2):19
         Z{k}='';
     end
     data(i,:)=Z;
-%     data(i,12) = char(datestr(datenum([1970 1 1 0 0 cell2mat(data(i,12))])));
-%      data(i,12)= {char(datestr(datenum([1970 1 1 0 0 cell2mat(data(i,12))])))};
     data(i,12) = {char(var_date)};
 end
+
 
 %Finally sort the the rows by Flight code and add the headers
 data = [headers;sortrows(data,1)];

@@ -6,8 +6,8 @@ def F24(year,month,day,hour,minute):
 	#import the urllib commands to use.
 	from StringIO import StringIO
 	import gzip
-	import urllib
-	import urllib2
+	import urllib, urllib2
+	import json, csv
 
 	#Set the url of the flightradar24 php to post to
 	url = 'http://db.flightradar24.com/playback/'
@@ -76,10 +76,34 @@ def F24(year,month,day,hour,minute):
 	else:
 		json_data = response.read()
 	
+	
+	jsonheaders = "{'Flight Code':[,'Hex','Lon','Lat','Track','Altitude','Speed','Squark','Radar','Aircraft','reg','Time Stamp','Dept Airport','Dest Airport','Flight Code Short','','','Flight Code','Time Stamp 2'],"
+	fieldnames = ['Flight Code','Hex','Lon','Lat','Track','Altitude','Speed','Squark','Radar','Aircraft','reg','Time Stamp','Dept Airport','Dest Airport','Flight Code Short','','','Flight Code','Time Stamp 2']
+		#jsonheaders = str(headers)
+	
+	#Lets try some parsing of the raw json data
+	json_data_start =json_data[:19]
+	json_data_end =json_data[-33:]
+	json_data_mid =json_data[19:-33]
+	
+	#the row count
+	count =json_data_end[str.find(json_data_end,'full_count":',0)+len('''full_count":'''):str.find(json_data_end,',"version"',0)]
+	
+	json_str = '{' + json_data_mid +'}'
+	js = json.loads(json_str, "utf-8")
+	csvfile = fname + '.csv'
+	f =csv.writer(open(csvfile,"w+"))
+	
+	#write header
+	f.writerow(fieldnames)
+	for K in js.keys():
+		f.writerow([K] + js[K])
+	
 	#Open a file for printing this data to. 
 	fname +='.json'
 	f = open(fname,'w')
-	f.write(json_data)
+	f.write(str(jsonheaders))
+	f.write(json_data_mid)
 
 	return date_str
 	
