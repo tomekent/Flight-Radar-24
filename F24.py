@@ -77,8 +77,8 @@ def F24(year,month,day,hour,minute):
 		json_data = response.read()
 	
 	
-	jsonheaders = "{'Flight Code':[,'Hex','Lon','Lat','Track','Altitude','Speed','Squark','Radar','Aircraft','reg','Time Stamp','Dept Airport','Dest Airport','Flight Code Short','','','Flight Code','Time Stamp 2'],"
-	fieldnames = ['Flight Code','Hex','Lon','Lat','Track','Altitude','Speed','Squark','Radar','Aircraft','reg','Time Stamp','Dept Airport','Dest Airport','Flight Code Short','','','Flight Code','Time Stamp 2']
+	jsonheaders = "{'Flight Code':[,'Hex','Lat','Lon','Track','Altitude','Speed','Squark','Radar','Aircraft','reg','Time Stamp','Dept Airport','Dest Airport','Flight Code Short','','','Flight Code','Time Stamp 2'],"
+	fieldnames = ['Flight Code','Hex','Lat','Lon','Track','Altitude','Speed','Squark','Radar','Aircraft','reg','Time Stamp','Dept Airport','Dest Airport','Flight Code Short','','','Flight Code','Time Stamp 2']
 		#jsonheaders = str(headers)
 	
 	#Lets try some parsing of the raw json data

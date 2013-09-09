@@ -182,7 +182,7 @@ idx(1)=18;
 data=cell(count,19);
 
 %create headers
-headers = {'Flight Code','Hex','Lon','Lat','Track','Altitude','Speed','Squark','Radar','Aircraft','reg','Time Stamp','Dept Airport','Dest Airport','Flight Code Short','','','Flight Code','Time Stamp 2'};
+headers = {'Flight Code','Hex','Lat','Lon','Track','Altitude','Speed','Squark','Radar','Aircraft','reg','Time Stamp','Dept Airport','Dest Airport','Flight Code Short','','','Flight Code','Time Stamp 2'};
 dbstop('error')
 
 for i=1:count
