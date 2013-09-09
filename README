@@ -5,3 +5,18 @@
 
 
 A Python script to grab some data from Flightradar24.com
+
+Sample usage:
+
+$ python F24.py YEAR MONTH DAY HOUR MINUTE
+
+This will save run a GET request to the F24 server and return the data to a local .json file (with filename based on time).
+
+
+
+
+########################### CHANGES ############################
+
+> It should handle inputs without leading zeros. 
+
+> Changed from POST to GET to comply with the site's changes.
