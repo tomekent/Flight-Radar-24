@@ -4,7 +4,8 @@
 def F24(year,month,day,hour,minute):
 
 	#import the urllib commands to use.
-	from StringIO import StringIO
+	#from StringIO import StringIO
+	import StringIO
 	import gzip
 	import urllib, urllib2
 	import json, csv
@@ -59,7 +60,7 @@ def F24(year,month,day,hour,minute):
 	#values = {'date' : date_str}
 
 	#set the url headers
-	headers = { 'User-Agent' : user_agent }
+	headers = { 'User-Agent' : user_agent, 'Accept-encoding' : 'gzip,deflate' }
 
 	#encode the url with the post data.
 	#data = urllib.urlencode(values)
@@ -67,10 +68,11 @@ def F24(year,month,day,hour,minute):
 	url +=date_str
 	url +='.js?callback=fetch_playback_cb'
 	req = urllib2.Request(url, data, headers)
+	#req.add_header('Accept-encoding', 'gzip')
 	response = urllib2.urlopen(req)
 	
 	if response.info().get('Content-Encoding') == 'gzip':
-	    buf = StringIO( response.read())
+	    buf = StringIO.StringIO( response.read())
 	    f = gzip.GzipFile(fileobj=buf)
 	    json_data = f.read()
 	else:
