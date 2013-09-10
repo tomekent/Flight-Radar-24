@@ -4,8 +4,10 @@
 def F24(year,month,day,hour,minute):
 
 	#import the urllib commands to use.
-	#from StringIO import StringIO
-	import StringIO
+	from StringIO import StringIO
+	#import StringIO
+	# possible Python 3 issue need io
+	#from io import StringIO 
 	import gzip
 	import urllib, urllib2
 	import json, csv
@@ -60,7 +62,7 @@ def F24(year,month,day,hour,minute):
 	#values = {'date' : date_str}
 
 	#set the url headers
-	headers = { 'User-Agent' : user_agent, 'Accept-encoding' : 'gzip,deflate' }
+	headers = { 'User-Agent' : user_agent, 'Accept-encoding' : 'gzip' }
 
 	#encode the url with the post data.
 	#data = urllib.urlencode(values)
@@ -72,7 +74,7 @@ def F24(year,month,day,hour,minute):
 	response = urllib2.urlopen(req)
 	
 	if response.info().get('Content-Encoding') == 'gzip':
-	    buf = StringIO.StringIO( response.read())
+	    buf = StringIO( response.read())
 	    f = gzip.GzipFile(fileobj=buf)
 	    json_data = f.read()
 	else:
