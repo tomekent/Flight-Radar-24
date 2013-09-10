@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Folder>
+    <name>Network Links</name>
+    <visibility>1</visibility>
+    <open>1</open>
+    <description>Network link F24 Data</description>
+    <NetworkLink>
+      <name>View F24 Data</name>
+      <visibility>1</visibility>
+      <open>1</open>
+      <description>The view-based refresh allows the remote server to calculate
+         the center of your screen and return a placemark.</description>
+      <refreshVisibility>1</refreshVisibility>
+      <flyToView>0</flyToView>
+      <Link>
+        <href>http://localhost:8001/F24_server.py</href>
+        <refreshInterval>10</refreshInterval>
+        <viewRefreshTime>10</viewRefreshTime>
+      </Link>
+    </NetworkLink>
+  </Folder>
+</kml>

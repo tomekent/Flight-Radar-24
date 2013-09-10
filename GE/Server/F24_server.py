@@ -1,8 +1,8 @@
-#!/bin/python
+#!/usr/bin/python
 # Filename: F24.py
 
 def F24(year,month,day,hour,minute):
-
+	
 	#import the urllib commands to use.
 	from StringIO import StringIO
 	#import StringIO
@@ -13,7 +13,8 @@ def F24(year,month,day,hour,minute):
 	import json, csv
 	import datetime
 	
-	#check the input
+	#Check the input is in the correct date range
+	
 	timedelta = (datetime.datetime.utcnow() - datetime.datetime(year,month,day,hour,minute,0))
 	if timedelta.total_seconds() < 0:
 		print 'Date is in the future, make sure input is correct and try again.'
@@ -22,6 +23,7 @@ def F24(year,month,day,hour,minute):
 	if timedelta.total_seconds() > (60*60*24*28):
 		print 'Date is too far in the past, must be within 28 days.'
 		return
+		
 
 	#Set the url of the flightradar24 php to post to
 	url = 'http://db.flightradar24.com/playback/'
@@ -106,7 +108,7 @@ def F24(year,month,day,hour,minute):
 	
 	json_str = '{' + json_data_mid +'}'
 	js = json.loads(json_str, "utf-8")
-	csvfile = fname + '.csv'
+	csvfile = 'data/' +  fname + '.csv'
 	f =csv.writer(open(csvfile,"w+"))
 	
 	#write header
@@ -116,20 +118,68 @@ def F24(year,month,day,hour,minute):
 	
 	#Open a file for printing this data to. 
 	fname +='.json'
-	f = open(fname,'w')
+	f = open('data/' + fname,'w')
 	f.write(str(jsonheaders))
 	f.write(json_data_mid)
 
-	return date_str
+	return js
 	
 # set the arguments from calling the py file
 import sys
+import datetime
 
-year=int(sys.argv[1])
-month=int(sys.argv[2])
-day=int(sys.argv[3])
-hour=int(sys.argv[4])
-minute=int(sys.argv[5])
+now = datetime.datetime.utcnow()
+
+
+#if len(sys.argv) > 1:
+#	year=int(sys.argv[1])
+#	month=int(sys.argv[2])
+#	day=int(sys.argv[3])
+#	hour=int(sys.argv[4])
+#	minute=int(sys.argv[5])
+#else:
+year = now.year
+month = now.month
+day = now.day -1
+hour = now.hour
+minute = now.minute	
+
 
 # run the above define function
-F24(year,month,day,hour,minute)
+js = F24(year,month,day,hour,minute)
+
+kmlheader = ( 
+	'<?xml version="1.0" encoding="UTF-8"?>\n'
+	'<kml xmlns="http://www.opengis.net/kml/2.2">\n'
+	'<Document>\n'
+	'<Style id="hl"><IconStyle><scale>1.4</scale>\n'
+	'		<Icon><href>http://maps.google.com/mapfiles/kml/shapes/target.png</href></Icon>\n'
+	'		<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>\n'
+	'	</IconStyle><ListStyle></ListStyle>\n'
+	'</Style>\n'
+	'<Style id="default"><IconStyle><scale>1.2</scale>\n'
+	'		<Icon><href>http://maps.google.com/mapfiles/kml/shapes/target.png</href></Icon>\n'
+	'		<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>\n'
+	'	</IconStyle><ListStyle></ListStyle>\n'
+	'</Style>\n'
+	'<StyleMap id="default0"><Pair><key>normal</key><styleUrl>#default</styleUrl></Pair>\n'
+	'	<Pair><key>highlight</key><styleUrl>#hl</styleUrl></Pair>\n'
+	'</StyleMap>\n'
+   			)
+kmlpoints ='\n'
+
+for K in js.keys():	
+   kmlpoints +='<Placemark><name>%s</name><styleUrl>#default0</styleUrl><Point>' % js[K][16]
+   kmlpoints +='<coordinates>%.6f,%.6f,%.6f</coordinates>' %(js[K][2],js[K][1],js[K][4])
+   kmlpoints +='<heading>%.6f</heading>' %(js[K][3])
+   kmlpoints +='</Point></Placemark>\n'
+
+   kmlfooter = (
+			'</Document>\n'
+   			'</kml>'
+				)
+kmlstr = kmlheader + kmlpoints + kmlfooter
+
+print 'Content-Type: application/vnd.google-earth.kml+xml\n'
+print kmlstr
+
