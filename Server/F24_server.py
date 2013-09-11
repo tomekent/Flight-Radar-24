@@ -164,12 +164,15 @@ kmlheader = (
 	'<?xml version="1.0" encoding="UTF-8"?>\n'
 	'<kml xmlns="http://www.opengis.net/kml/2.2">\n'
 	'<Document>\n'
-	'<Style id="hl"><IconStyle><scale>1.4</scale>\n'
+	'<Style id="hl"><IconStyle><scale>1.4</scale><color>ff8c4800</color>\n'
 	'		<Icon><href>http://maps.google.com/mapfiles/kml/shapes/target.png</href></Icon>\n'
 	'		<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>\n'
 	'	</IconStyle><ListStyle></ListStyle>\n'
+	'	<BalloonStyle>'
+	'        <text>$[description]</text>'
+	'    </BalloonStyle>\n'
 	'</Style>\n'
-	'<Style id="default"><IconStyle><scale>1.2</scale>\n'
+	'<Style id="default"><IconStyle><scale>1.2</scale><color>ff8c4800</color>\n'
 	'		<Icon><href>http://maps.google.com/mapfiles/kml/shapes/target.png</href></Icon>\n'
 	'		<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>\n'
 	'	</IconStyle><ListStyle></ListStyle>\n'
@@ -185,8 +188,24 @@ for K in js.keys():
 		break
 	if west <= js[K][2] <= east: # Within the view box
 		if south <= js[K][1] <= north:
-			kmlpoints +='<Placemark><name>%s</name><styleUrl>#default0</styleUrl><Point>' % js[K][16]
-			kmlpoints +='<coordinates>%.6f,%.6f,%.6f</coordinates>' %(js[K][2],js[K][1],js[K][4])
+			
+		#	['Flight Code','Hex','Lat','Lon','Track','Altitude','Speed','Squark','Radar','Aircraft','reg','Time Stamp','Dept Airport','Dest Airport','Flight Code Short','','','Flight Code','Time Stamp 2']
+			
+			
+			kmlpoints +='<Placemark><name>%s</name><styleUrl>#default0</styleUrl>' % js[K][16]			
+			kmlpoints +='<description><![CDATA['
+			kmlpoints +='<b>Reg: </b> %s<br>' % js[K][0]
+			kmlpoints +='<b>Flight Code: </b> %s <br>' % js[K][16]
+			kmlpoints +='<b>Departure Airport :</b>%s<br>' % js[K][11]
+			kmlpoints +='<b>Destination Airport :</b> %s <br>' % js[K][12]
+			kmlpoints +='<b>Aircraft: </b> %s<br>' % js[K][8]
+			kmlpoints +='<b>Altitude: </b>%.0f <br>' % js[K][4]
+			kmlpoints +='<b>Speed: </b>  %.0f <br>' % js[K][5]
+			kmlpoints +='<b>Track: </b>%.0f <br>' % js[K][3]
+			kmlpoints +='<b>Radar: </b>  %s <br>' % js[K][7]
+			kmlpoints +='<b>Squark: </b> %s<br>' % js[K][6]
+			kmlpoints +=']]></description>'	
+			kmlpoints +='<Point><coordinates>%.6f,%.6f,%.6f</coordinates>' %(js[K][2],js[K][1],js[K][4])
 			kmlpoints +='<heading>%.6f</heading>' %(js[K][3])
 			kmlpoints +='</Point></Placemark>\n'
 			count += 1
