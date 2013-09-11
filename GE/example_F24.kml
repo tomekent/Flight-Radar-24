@@ -15,8 +15,9 @@
       <flyToView>0</flyToView>
       <Link>
         <href>http://localhost:8001/F24_server.py</href>
-        <refreshInterval>10</refreshInterval>
-        <viewRefreshTime>10</viewRefreshTime>
+        <refreshInterval>2</refreshInterval>
+        <viewRefreshMode>onStop</viewRefreshMode>
+        <viewRefreshTime>1</viewRefreshTime>
       </Link>
     </NetworkLink>
   </Folder>
