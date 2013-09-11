@@ -1,27 +1,23 @@
-#!/bin/python
-# Filename: F24.py
+#!/usr/bin/env python
+#=============================================================================
+# appl    : Flight 24 Data grabber
+# script  : F24.py
+# version : 1.1
+# author  : Tom Kent (Tomekent@hotmail.com)
+#=============================================================================
 
 def F24(year,month,day,hour,minute):
 
-	#import the urllib commands to use.
-	from StringIO import StringIO
-	#import StringIO
-	# possible Python 3 issue need io
-	#from io import StringIO 
-	import gzip
-	import urllib, urllib2
-	import json, csv
-	import datetime
+	from StringIO import StringIO # possible Python 3 issue need io #from io import StringIO 
+	import gzip, urllib, urllib2, json, csv, datetime, sys
 	
 	#check the input
 	timedelta = (datetime.datetime.utcnow() - datetime.datetime(year,month,day,hour,minute,0))
 	if timedelta.total_seconds() < 0:
-		print 'Date is in the future, make sure input is correct and try again.'
-		return
+		sys.exit('Date is in the future, make sure input is correct and try again.')
 
 	if timedelta.total_seconds() > (60*60*24*28):
-		print 'Date is too far in the past, must be within 28 days.'
-		return
+		sys.exit('Date is too far in the past, must be within 28 days.')
 
 	#Set the url of the flightradar24 php to post to
 	url = 'http://db.flightradar24.com/playback/'
@@ -29,59 +25,25 @@ def F24(year,month,day,hour,minute):
 	#define the user agent to be something 
 	user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
 
-	date_str=''
-	fname='F24data_'
-	date_str +=str(year)
-	#date_str +='-'
-	
 	# remove any errors arising from the int input of for example 01 being truncated to 1.
-	if int(month)<10:
-		date_str +='0'
-		
-	date_str +=str(month)	
-	#date_str +='-'
-	
-	if int(day)<10:
-		date_str +='0'
+	# month = '%02.f' % float(month)
+	# day = '%02.f' % float(day)
+	# hour = '%02.f' % float(hour)
+	# minute = '%02.f' % float(minute)
+	# 	
+	# date_str += str(year) + str(month) + str(day) + '/' + str(hour) + str(minute) + '00'	
+	# fname += str(year) + str(month) + str(day) + '_' + str(hour) + '-' +  str(minute) + '-00'
 
-	date_str +=str(day)
-	fname +=date_str
-	date_str +='/'
-	fname +='_'
-
-	if int(hour)<10:
-		date_str +='0'
-		fname +='0'
-
-	date_str +=str(hour)
-	fname +=str(hour)
-	#date_str +='/'
-	fname +='-'
-
-	if int(minute)<10:
-		date_str +='0'
-		fname +='0'
-
-	date_str +=str(minute)
-	fname +=str(minute)
-	date_str +='00'
-	fname +='-00'
-
-	#set the post data.
-
-	# for example: values = {'date' : '2012-10-17 00:10:00'}
-	#values = {'date' : date_str}
-
+	date_str = '%02.f%02.f%02.f/%02.f%02.f00' %(float(year),float(month),float(day),float(hour),float(minute))
+	fname = 'F24data_%02.f%02.f%02.f_%02.f-%02.f-00' %(float(year),float(month),float(day),float(hour),float(minute))
+	print 'Getting data for %02.f:%02.f on %02.f/%02.f/%02.f' %(float(hour),float(minute),float(day),float(month),float(year))
 	#set the url headers
 	headers = { 'User-Agent' : user_agent, 'Accept-encoding' : 'gzip' }
 
 	#encode the url with the post data.
-	#data = urllib.urlencode(values)
-	data =None
-	url +=date_str
-	url +='.js?callback=fetch_playback_cb'
-	req = urllib2.Request(url, data, headers)
-	#req.add_header('Accept-encoding', 'gzip')
+	fullurl = url + date_str + '.js?callback=fetch_playback_cb'
+	
+	req = urllib2.Request(fullurl, None, headers)
 	response = urllib2.urlopen(req)
 	
 	if response.info().get('Content-Encoding') == 'gzip':
@@ -108,7 +70,7 @@ def F24(year,month,day,hour,minute):
 	js = json.loads(json_str, "utf-8")
 	csvfile = fname + '.csv'
 	f =csv.writer(open(csvfile,"w+"))
-	
+	print 'CSV data saved to: %s' % csvfile
 	#write header
 	f.writerow(fieldnames)
 	for K in js.keys():
@@ -119,7 +81,7 @@ def F24(year,month,day,hour,minute):
 	f = open(fname,'w')
 	f.write(str(jsonheaders))
 	f.write(json_data_mid)
-
+	print 'Json data saved to: %s' %fname
 	return date_str
 	
 # set the arguments from calling the py file
@@ -133,3 +95,4 @@ minute=int(sys.argv[5])
 
 # run the above define function
 F24(year,month,day,hour,minute)
+print 'Process Complete.'
